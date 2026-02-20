@@ -52,9 +52,10 @@ else
 fi
 
 # Output as simple key=value (easy to source in bash)
+# Quote VERDICT_REASON to handle parentheses safely when eval'd
 cat << EOF
 VERDICT=$VERDICT
-VERDICT_REASON=$VERDICT_REASON
+VERDICT_REASON="$VERDICT_REASON"
 MODULES_WITH_QA=$MODULES_WITH_QA
 MODULES_WITHOUT_QA=$MODULES_WITHOUT_QA
 MODULES_PASSED=$MODULES_PASSED

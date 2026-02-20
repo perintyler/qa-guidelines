@@ -13,28 +13,50 @@ QA guidelines aim to mimic how a human manually tests software, whether that be 
 
 ---
 
-### The QA.md file
+## How it works
 
-To test a module in your project, add a `QA.md` to define your *QA Guidelines*.
+Add a `QA.md` file to any module in your project to define its *QA Guidelines*. The QA agent is responsible for generating a QA report for all QA-able modules.
 
-QA Guidelines consist of...
+### 1. The QA.md Files
 
-1. Requirements (dependencies, tooling, environment)
-2. Setup instructions
-3. QA Steps
-4. Success Criteria
-5. Cleanup (optional)
+Each module gets a `QA.md` file at its root that acts as an executable spec:
 
-### The QA Agent
+- **Requirements** — tools and environment variables needed
+- **Setup** — how to install and start the module
+- **Test Steps** — numbered steps, each explaining how to verify a piece of the system
+- **Success Criteria** — what must pass for QA to succeed
+- **Cleanup** (optional)
 
+### 2. The QA Agent
 
-The QA agent finds modules with QA guideline files, performs quality assurance for any module with a guidelines file in parallel, which all gets combined, finally amalgamating in a pass/fail report that breaks down what the agent "saw" and its analysis on whether or not the success criteria was met.
+The QA agent finds modules with QA guideline files, conducts QA for each module in parallel, generating sub-reports along the way - which all gets combined, finally amalgamating in a pass/fail report that breaks down what the agent "saw" and its analysis on whether or not the success criteria was met.
 
-#### QA Reports
+The QA agent's workflow consists of...
 
-After running, the agent generates a timestamped markdown report in `.reports/` showing pass/fail status for each module, checkpoint details, any errors encountered, and a high-level analysis of whether the success criteria was met.
+1. **Discovers** all modules with QA.md files across the project
+2. **Runs** each QA in parallel (using the Claude Agent SDK to run an agent per module)
+3. **Aggregates** results into pass/fail per module
+4. **Generates** timestamped markdown reports
+
+### 3. The QA Report
+
+A QA Report is a timestamped pass/fail report that breaks down what the agent "saw" and whether the success criteria was met. It consists of:
+
+1. Top level QA result: `PASS` or `FAIL`
+2. Overview of outcome of each module's QA steps
+3. High level analysis on whether success criteria was met for all nested modules
 
 ![QA Agent Report Summary](assets/qa-agent-report-summary.png)
+
+---
+
+## Why It Works
+
+- Module authors verify their own QA steps work (deterministically, once)
+- The agent handles the tedium of re-running those steps later
+- Reports track QA state over time by branch and timestamp
+
+---
 
 ## Requirements
 
@@ -154,12 +176,6 @@ Navigate to http://localhost:9876/api/todos/999
 
 **Expected:** 404 response or "Not found" message
 
-## Cleanup
-
-```bash
-kill $(lsof -ti:9876) 2>/dev/null || true
-```
-
 ## Success Criteria
 
 - [ ] Server starts and health check responds
@@ -214,32 +230,6 @@ vendor
 ### Tool Permissions
 
 Add a `<!-- tools: Bash,Read -->` comment to your `QA.md` to control which tools Claude can use. Defaults to `Bash,Read`.
-
-## How It Works
-
-### 1. QA.md Files
-
-Each module gets a `QA.md` file at its root that acts as an executable spec:
-
-- **Requirements** — tools and environment variables needed
-- **Setup** — how to install and start the module
-- **Test Steps** — numbered steps, each explaining how to verify a piece of the system
-- **Success Criteria** — what must pass for QA to succeed
-
-### 2. QA Agent
-
-An orchestrator that:
-
-1. **Discovers** all modules with QA.md files across the project
-2. **Runs** each QA in parallel (using the Claude Agent SDK to run an agent per module)
-3. **Aggregates** results into pass/fail per module
-4. **Generates** timestamped markdown reports
-
-### Why It Works
-
-- Module authors verify their own QA steps work (deterministically, once)
-- The agent handles the tedium of re-running those steps later
-- Reports track QA state over time by branch and timestamp
 
 ## Examples
 
