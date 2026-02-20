@@ -1,0 +1,8 @@
+.reports/
+.git/
+.claude/
+assets/
+qa/
+agent/AGENT.md
+OVERVIEW.md
+USAGE.md

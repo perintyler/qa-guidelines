@@ -1,0 +1,25 @@
+{
+  "name": "qa-guidelines",
+  "version": "0.1.0",
+  "description": "QA orchestrator that uses AI agents to verify software works by running through QA.md checklists",
+  "bin": {
+    "qa": "./bin/qa"
+  },
+  "files": [
+    "bin/",
+    "agent/",
+    "install.sh",
+    "examples/"
+  ],
+  "keywords": [
+    "qa",
+    "testing",
+    "ai",
+    "claude",
+    "agent"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.15"
+  }
+}
